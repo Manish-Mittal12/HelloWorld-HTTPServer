@@ -1,11 +1,14 @@
-FROM microsoft/iis
+FROM ubuntu:latest
+MAINTAINER Manish Mittal
 
-RUN mkdir C:\site
+RUN apt-get update
+RUN apt-get install -y nodejs
+RUN apt-get install -y npm
+RUN ln -s /usr/bin/nodejs /usr/bin/node
 
-RUN powershell -NoProfile -Command \
-    Import-module IISAdministration; \
-    New-IISSite -Name "Site" -PhysicalPath C:\site -BindingInformation "*:8000:"
+RUN npm install -g http-server
 
-EXPOSE 8000
+ADD HelloWorld.html /usr/apps/hello-docker/HelloWorld.html
+WORKDIR /usr/apps/hello-docker/
 
-ADD HelloWorld.html /site
+CMD ["http-server", "-s"]
